@@ -21,8 +21,6 @@ if not os.path.exists("config.json"):
         "role1-pts": "",
         "role2-id": "",
         "role2-pts": "",
-        "role3-id": "",
-        "role3-pts": ""
     }
     json.dump(default_json, f, indent=4)
     print("config not found, new file created. re-run the file after filling out the config")
@@ -53,10 +51,8 @@ guild_id = config["guild-id"]
 logs_channel = config["logs-channel-id"]
 role1_id = config["role1-id"]
 role2_id = config["role2-id"]
-role3_id = config["role3-id"]
 role1_pts = config["role1-pts"]
 role2_pts = config["role2-pts"]
-role3_pts = config["role3-pts"]
 
 global membercache
 
