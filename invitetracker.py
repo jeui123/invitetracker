@@ -20,7 +20,7 @@ if not os.path.exists("config.json"):
         "role1-id": "",
         "role1-pts": "",
         "role2-id": "",
-        "role2-pts": "",
+        "role2-pts": ""
     }
     json.dump(default_json, f, indent=4)
     print("config not found, new file created. re-run the file after filling out the config")

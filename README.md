@@ -15,6 +15,28 @@ python3 invitetracker.py
 ```
 This will create a file named "config.json". Edit it to the fields provided and re-run the bot.
 
+Config:
+```json
+{
+    "token": "",
+    "guild-id": "",
+    "logs-channel": "",
+    "role1-id": "",
+    "role1-pts": "",
+    "role2-id": "",
+    "role2-pts": ""
+}
+```
+`token`: Discord bot token
+
+`guild-id`: ID of the server you are running it in
+
+`logs-channel`: Channel ID of your log channel
+
+`roleX-id`: id of role X that is being tracked
+
+`roleX-pts`: points that role X gives to the inviter
+
 Discord Commands:
 
 `%stats (@mention)` - shows stats of yourself or of the user provided if mention
