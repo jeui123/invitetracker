@@ -1,5 +1,4 @@
 import discord
-import requests
 import logging
 import sqlite3
 import json
@@ -10,7 +9,6 @@ import asyncio
 from discord.ext import commands
 from contextlib import closing
 from discord.ext.commands import has_permissions, MissingPermissions
-from discord import Member
 
 
 if not os.path.exists("config.json"):
