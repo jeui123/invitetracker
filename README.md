@@ -15,5 +15,15 @@ python3 invitetracker.py
 ```
 This will create a file named "config.json". Edit it to the fields provided and re-run the bot.
 
+Discord Commands:
+
+`%stats (@mention)` - shows stats of yourself or of the user provided if mention
+
+`%lb` - shows leaderboard based on invite points
+
+`%addpoints` - moderation command used to manually add points (can be negative, **requires Manage Roles**)
+
+
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
