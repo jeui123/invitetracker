@@ -37,7 +37,6 @@ handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w'
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-connection = sqlite3.connect("completes.db")
 
 
 
@@ -48,7 +47,7 @@ config = json.loads(tmpconfig)
 
 token = config["token"]
 guild_id = config["guild-id"]
-logs_channel = config["logs-channel-id"]
+logs_channel = config["logs-channel"]
 role1_id = config["role1-id"]
 role2_id = config["role2-id"]
 role1_pts = config["role1-pts"]
@@ -78,7 +77,10 @@ async def getID(ign):
     print(id)
     return (id, notfound)
 
-dataconnection = sqlite3.connect("data.db")
+with closing(sqlite3.connect("data.db")) as dataconnection:
+    with closing(dataconnection.cursor()) as cursor:
+        cursor.execute("CREATE TABLE IF NOT EXISTS members (id text PRIMARY KEY, points int)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS invites (id text PRIMARY KEY, inviter_id text)")
 
 invites = {}
 last = ""
@@ -169,7 +171,10 @@ async def leaderboard(ctx):
     embed=discord.Embed(title="Leaderboard", color=0xe19d09)
     embed.add_field(name="\u200b", value="Top 5, organized by: **invite points**", inline=False)
     for i in range(1,6):
-        embed.add_field(name="\u200b", value=f"{i}. <@{plb[i-1][0]}> {plb[i-1][1]}", inline=False)
+        try:
+            embed.add_field(name="\u200b", value=f"{i}. <@{plb[i-1][0]}> {plb[i-1][1]}", inline=False)
+        except:
+            print(f"Position {i} doesn't exist")
     await ctx.send(embed=embed)
 
 
@@ -184,23 +189,19 @@ async def on_member_update(before, after):
     if len(before.roles) < len(after.roles):
         newRole = next(role for role in after.roles if role not in before.roles)
         inviter_id = ""
-        if newRole.id == role1_id and not before.roles.count(role2_id):
-            #TODO: add role1_pts to inviters count
+        if str(newRole.id) == str(role1_id):
             with closing(sqlite3.connect("data.db")) as dataconnection:
                 with closing(dataconnection.cursor()) as cursor:
                     inviter_id = cursor.execute("SELECT inviter_id FROM invites WHERE id=?",[str(before.id)]).fetchone()[0]
                     cursor.execute("INSERT INTO members (id, points) VALUES(?, ?) ON CONFLICT(id) DO UPDATE SET points=points+? WHERE id=?", [str(inviter_id), role1_pts, role1_pts, str(inviter_id)])
-                    #cursor.execute("INSERT INTO members (id, points) VALUES(?, ?)", [str(inviter_id), role1_pts])
                     dataconnection.commit()
                     print(f"added {role1_pts} to {inviter_id}")
                     return
-        if newRole.id == role2_id and not before.roles.count(role1_id):
-            #TODO: add role2_pts to inviters count
+        if str(newRole.id) == str(role2_id):
             with closing(sqlite3.connect("data.db")) as dataconnection:
                 with closing(dataconnection.cursor()) as cursor:
                     inviter_id = cursor.execute("SELECT inviter_id FROM invites WHERE id=?",[str(before.id)]).fetchone()[0]
                     cursor.execute("INSERT INTO members (id, points) VALUES(?, ?) ON CONFLICT(id) DO UPDATE SET points=points+? WHERE id=?", [str(inviter_id), role2_pts, role2_pts, str(inviter_id)])
-                    #cursor.execute("INSERT INTO members (id, points) VALUES(?, ?)", [str(inviter_id), role2_pts])
                     dataconnection.commit()
                     print(f"added {role2_pts} to {inviter_id}")
                     return
